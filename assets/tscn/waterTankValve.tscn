@@ -1,9 +1,9 @@
 [gd_scene load_steps=13 format=4 uid="uid://cochwkos51q5q"]
 
-[ext_resource type="Script" uid="uid://cwe844jf7evuk" path="res://assets/scripts/waterTankValve.gd" id="1_l7tee"]
+[ext_resource type="Script" uid="uid://cwe844jf7evuk" path="res://assets/scripts/waterTankValve.gd" id="1_3ce73"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_l7tee"]
-height = 0.6
+height = 0.874
 radius = 0.2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e2bcu"]
@@ -143,11 +143,10 @@ _data = {
 
 [node name="waterTankValve" type="StaticBody3D"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-script = ExtResource("1_l7tee")
+script = ExtResource("1_3ce73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, -8.742278e-08, -2, 0, 2, -8.742278e-08, -0.646898, 0.8517214, -3.8756216)
-visible = false
 shape = SubResource("CylinderShape3D_l7tee")
 debug_color = Color(0.87040496, 0.31299525, 0.42000118, 0.41960785)
 
