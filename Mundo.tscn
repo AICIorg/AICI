@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://be0db0gytedhy"]
+[gd_scene load_steps=13 format=3 uid="uid://be0db0gytedhy"]
 
 [ext_resource type="Script" uid="uid://jpmwdaoeoqsu" path="res://Mundo.gd" id="1_ubi47"]
 [ext_resource type="PackedScene" uid="uid://cb54db7iod375" path="res://ChatUI.tscn" id="2_xywc0"]
 [ext_resource type="PackedScene" uid="uid://vg7yt2h1wvhc" path="res://scenery/warehouse_fbx.fbx" id="3_xywc0"]
 [ext_resource type="Script" uid="uid://cswit7xlkn6cd" path="res://asset_manager.gd" id="5_5yunf"]
 [ext_resource type="Script" uid="uid://drq2cf54ecpv3" path="res://player.gd" id="5_drrim"]
+[ext_resource type="PackedScene" uid="uid://cochwkos51q5q" path="res://assets/tscn/waterTankValve.tscn" id="6_drrim"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xwo6f"]
 
@@ -88,3 +89,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0007748604, 0.45659173, -0.
 
 [node name="RayCast3D" type="RayCast3D" parent="Player/Head/Camera3D"]
 target_position = Vector3(0, 0, -3)
+
+[node name="waterTankValve" parent="." instance=ExtResource("6_drrim")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.7588005, -1.812, 2.2158968)
+
+[node name="ValveLabel3D" type="Label3D" parent="waterTankValve"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4842465, 1.9863335, -3.4021006)
+billboard = 1
+outline_size = 8
