@@ -92,8 +92,3 @@ target_position = Vector3(0, 0, -3)
 
 [node name="waterTankValve" parent="." instance=ExtResource("6_drrim")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.7588005, -1.812, 2.2158968)
-
-[node name="ValveLabel3D" type="Label3D" parent="waterTankValve"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4842465, 1.9863335, -3.4021006)
-billboard = 1
-outline_size = 8

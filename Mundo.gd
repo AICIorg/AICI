@@ -11,6 +11,7 @@ extends Node3D
 @onready var sprite = $Sprite3D
 @onready var camera = $Player/Head/Camera3D
 @onready var camera_controller = $Player/Head/Camera3D # Referencia al script de la cámara
+@onready var water_tank_valve = $waterTankValve
 
 var isVisible = false
 var is_dragging_chat = false
@@ -71,10 +72,6 @@ var fixed_positions = {
 	"panel": {
 		"position": Vector3(0, 0, 0),
 		"rotation": Vector3(0, 0, 0)
-	},
-	"tanque de agua": {
-		"position": Vector3(11, -1.8, 2.2),
-		"rotation": Vector3(0, 90, 0)
 	}
 }
 
@@ -545,6 +542,30 @@ func insertAllAssets():
 func insertAsset(name: String):
 	print("insertAsset")
 	var asset_key = name.to_lower()
+	
+	# 🚰 CASO ESPECIAL: Tanque de agua (ya existe en la escena, solo hacerlo visible)
+	if asset_key == "tanque de agua":
+		if water_tank_valve == null:
+			rich_text_label.text += "\n[color=red]Error:[/color] No se encontró el nodo waterTankValve en la escena."
+			print("❌ water_tank_valve es null.  Verifica que el nodo exista y la ruta sea correcta.")
+			return
+		
+		if water_tank_valve.visible:
+			rich_text_label.text += "\n[color=yellow]Sistema:[/color] El tanque de agua ya está activado."
+			print("⚠️ Tanque de agua ya activado")
+			return
+		
+		# Hacer visible el tanque
+		water_tank_valve.visible = true
+		rich_text_label.text += "\n[color=green]Sistema:[/color] Se activó el tanque de agua."
+		print("✅ Tanque de agua activado")
+		
+		# Incrementar contador
+		if asset_spawn_count.has(asset_key):
+			asset_spawn_count[asset_key] += 1
+		else:
+			asset_spawn_count[asset_key] = 1
+		return  # ← Salir, no instanciar nada
 
 	#  VERIFICAR SI EL ASSET TIENE LÍMITE DE SPAWNEO
 	if asset_spawn_limits.has(asset_key):
@@ -610,7 +631,7 @@ func insertAsset(name: String):
 			var first_anim = anim_player.get_animation_list()[0]
 			anim_player.play(first_anim)
 			print("Animación '", first_anim, "' iniciada")
-
+	
 	get_tree().current_scene.add_child(instance)
 	spawned_assets.append(instance)
 	rich_text_label.text += "\n[color=green]Sistema:[/color] Se insertó " + name + " en " + str(instance.global_transform.origin)

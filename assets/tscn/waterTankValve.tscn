@@ -143,6 +143,7 @@ _data = {
 
 [node name="waterTankValve" type="StaticBody3D"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+visible = false
 script = ExtResource("1_3ce73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -173,3 +174,8 @@ skeleton = NodePath("")
 libraries = {
 &"": SubResource("AnimationLibrary_5t6ow")
 }
+
+[node name="ValveLabel3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4842465, 1.9863335, -3.4021006)
+billboard = 1
+outline_size = 8
