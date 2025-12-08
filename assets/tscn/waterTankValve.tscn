@@ -166,7 +166,7 @@ transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -2.1303163, 1.1921076, -4.
 transform = Transform3D(-1.2409726, -0.010831729, -0.1789598, -0.0073333, 1.8736817, -0.00024497864, 0.21164405, 0.0014098726, -1.0493374, -0.16895045, 1.3693479, -6.7528586)
 
 [node name="C-Group#6" type="MeshInstance3D" parent="."]
-transform = Transform3D(-1.36989, -3.7581112, 0, 3.7581112, -1.36989, 0, 0, 0, 8, -0.6034206, 0.7817743, -3.8556669)
+transform = Transform3D(3.9999998, 0, 0, 0, 3.9999998, 0, 0, 0, 8, -0.6034206, 0.7817743, -3.8556669)
 mesh = SubResource("ArrayMesh_l7tee")
 skeleton = NodePath("")
 
@@ -179,3 +179,5 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4842465, 1.9863335, -3.4021006)
 billboard = 1
 outline_size = 8
+
+[node name="ValveExit" type="Marker3D" parent="."]

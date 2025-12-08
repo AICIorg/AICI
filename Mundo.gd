@@ -13,6 +13,9 @@ extends Node3D
 @onready var camera_controller = $Player/Head/Camera3D # Referencia al script de la cámara
 @onready var water_tank_valve = $waterTankValve
 
+@export var valveExitOffset := Vector3(-0.6, 0.5, -3.8)
+@export var valveExitScale := Vector3(0.5, 0.5, 0.5)
+
 var isVisible = false
 var is_dragging_chat = false
 var drag_start_pos = Vector2.ZERO
@@ -93,9 +96,12 @@ func _ready():
 	# 2. ¡CONEXIÓN OPENAI!
 	# Conectamos la señal de "request_completed" del nodo HTTPRequest
 	openai_request.request_completed.connect(_on_request_completed)
-
+	
 	# Mensaje de bienvenida
-	show_welcome_message()
+	show_welcome_message() 
+	water_tank_valve.connect("valve_opening", Callable(self, "_on_tank_valve_opening"))
+	water_tank_valve.connect("valve_closing", Callable(self, "_on_tank_valve_closing"))
+	
 
 # 🔑 Cargar API key desde localStorage (solo web)
 func load_api_key():
@@ -537,7 +543,123 @@ func insertAllAssets():
 	for name in names:
 		if typeof(name) == TYPE_STRING:
 			insertAsset(name)
+func find_mesh(node: Node) -> MeshInstance3D:
+	if node is MeshInstance3D:
+		return node
+	for child in node.get_children():
+		var result = find_mesh(child)
+		if result:
+			return result
+	return null
 
+func add_water_to_tank(tank: Node3D):
+	# buscar el mesh dentro del tanque
+	var mesh_node = find_mesh(tank)
+	if mesh_node == null:
+		push_error("No MeshInstance found in tank!")
+		return
+
+	# aabb del tanque
+	var aabb = mesh_node.mesh.get_aabb()
+
+	# cálculos exactos
+	var radius = (aabb.size.x / 2.0) * 0.75
+	var height = aabb.size.y * 0.70
+
+	# crear el agua
+	var water = MeshInstance3D.new()
+	water.name = "WaterVolume"
+
+	var cylinder = CylinderMesh.new()
+	cylinder.top_radius = radius
+	cylinder.bottom_radius = radius
+	cylinder.height = height
+	water.mesh = cylinder
+
+	# posicionar agua sobre el piso interno
+	water.position.y = aabb.position.y + (height / 2.0)
+
+	# agregar shader
+	var shader_mat = ShaderMaterial.new()
+	shader_mat.shader = load("res://assets/shaders/water.gdshader")
+	water.material_override = shader_mat
+
+	tank.add_child(water)
+	
+func add_valve_water_particles(tank: Node3D):
+	var exit: Node3D = tank.get_node("ValveExit")
+	exit.position = valveExitOffset
+	exit.scale = valveExitScale
+
+	var p := GPUParticles3D.new()
+	p.name = "ValveWaterParticles"
+	p.amount = 1500
+	p.lifetime = 0.8
+	p.preprocess = 0.3
+	p.emitting = false
+
+	# IMPORTANTE: así no desaparece cuando mirás de costado
+	p.local_coords = false
+	p.top_level = true
+
+	# === MATERIAL ===
+	var pm := ParticleProcessMaterial.new()
+	pm.gravity = Vector3(0, -9.8, 0)
+
+	pm.initial_velocity_min = 6.0
+	pm.initial_velocity_max = 12.0
+
+	pm.direction = Vector3(0, -1, 0)
+	pm.spread = 18.0
+
+	# *** COLOR ARREGLADO ***
+	# Azul mucho más visible, sin volverse gris
+	pm.color = Color(0.25, 0.6, 1.0, 0.95)
+
+	# *** GOTAS AJUSTADAS ***
+	pm.scale_min = 0.20
+	pm.scale_max = 0.35
+
+	p.process_material = pm
+
+	# === MESH ===
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 0.07
+	mesh.bottom_radius = 0.07
+	mesh.height = 0.14
+	p.draw_pass_1 = mesh
+
+	# === AABB ===
+	p.visibility_aabb = AABB(Vector3(-10, -10, -10), Vector3(20, 20, 20))
+
+	# === ADD ===
+	tank.add_child(p)
+	p.top_level = true
+	p.global_position = exit.global_position
+
+	tank.set("valve_particles", p)
+	p.add_to_group("debug_particles")
+
+
+func _on_tank_valve_opening():
+	var stream := water_tank_valve.get_node("ValveWaterParticles")
+	stream.emitting = true
+	print("DEBUG EMIT:", stream.emitting) 
+
+func fix_valve_exit_position(tank: Node3D):
+	var exit := tank.get_node("ValveExit")
+	if exit == null:
+		push_error("NO EXISTE ValveExit EN EL MODELO")
+		return
+
+	# --- Ajuste automático del ValveExit ---
+	# Valores aproximados: adelante + abajo + ligeramente a la derecha
+	exit.transform.origin = Vector3(0.0, -1.2, 1.1)
+	
+func _on_tank_valve_closing():
+	var stream := water_tank_valve.get_node("ValveWaterParticles")
+	stream.emitting = false
+		
 # --- NUEVO: insertar asset en el mundo ---
 func insertAsset(name: String):
 	print("insertAsset")
@@ -559,7 +681,34 @@ func insertAsset(name: String):
 		water_tank_valve.visible = true
 		rich_text_label.text += "\n[color=green]Sistema:[/color] Se activó el tanque de agua."
 		print("✅ Tanque de agua activado")
+		add_water_to_tank(water_tank_valve)
 		
+		#fix_valve_exit_position(water_tank_valve)
+		add_valve_water_particles(water_tank_valve)
+
+		# conectar señales del tanque al Mundo
+		water_tank_valve.valve_opening.connect(_on_tank_valve_opening)
+		water_tank_valve.valve_closing.connect(_on_tank_valve_closing)
+		
+		var mesh_node = find_mesh(water_tank_valve)
+		if mesh_node:
+			print("Mesh found: ", mesh_node.name)
+			print("Mesh AABB: ", mesh_node.mesh.get_aabb())
+		else:
+			print("❌ No mesh inside tank")
+		
+		var valve_exit = Marker3D.new()
+		valve_exit.name = "ValveExit"
+
+		# posición aproximada basada en tu tanque real
+		# (ya lo vimos en runtime)
+		valve_exit.position = Vector3(3.5, -0.8, 0.0)
+		
+
+		water_tank_valve.add_child(valve_exit)
+		water_tank_valve.global_position.y += 0.0
+		print("HIJOS DEL TANQUE:", water_tank_valve.get_children())
+	
 		# Incrementar contador
 		if asset_spawn_count.has(asset_key):
 			asset_spawn_count[asset_key] += 1

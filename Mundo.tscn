@@ -91,4 +91,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0007748604, 0.45659173, -0.
 target_position = Vector3(0, 0, -3)
 
 [node name="waterTankValve" parent="." instance=ExtResource("6_drrim")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.7588005, -1.812, 2.2158968)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.7588005, -1.9954114, 2.2158968)
