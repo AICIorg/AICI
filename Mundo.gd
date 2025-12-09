@@ -598,48 +598,55 @@ func add_valve_water_particles(tank: Node3D):
 	p.preprocess = 0.3
 	p.emitting = false
 
-	# IMPORTANTE: así no desaparece cuando mirás de costado
+	# IMPORTANTE: así no desaparece según el ángulo de cámara
 	p.local_coords = false
 	p.top_level = true
 
-	# === MATERIAL ===
+	# ----------------------------------------------------
+	#  MATERIAL FÍSICO (MOVIMIENTO)
+	# ----------------------------------------------------
 	var pm := ParticleProcessMaterial.new()
 	pm.gravity = Vector3(0, -9.8, 0)
-
 	pm.initial_velocity_min = 6.0
 	pm.initial_velocity_max = 12.0
-
 	pm.direction = Vector3(0, -1, 0)
 	pm.spread = 18.0
-
-	# *** COLOR ARREGLADO ***
-	# Azul mucho más visible, sin volverse gris
-	pm.color = Color(0.25, 0.6, 1.0, 0.95)
-
-	# *** GOTAS AJUSTADAS ***
 	pm.scale_min = 0.20
 	pm.scale_max = 0.35
-
 	p.process_material = pm
 
-	# === MESH ===
+	# ----------------------------------------------------
+	#  MATERIAL VISUAL (COLOR REAL DE AGUA)
+	#  🔥 ESTO ES LO QUE EVITA EL GRIS DE MIERDA
+	# ----------------------------------------------------
+	var drop_mat := StandardMaterial3D.new()
+	drop_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED   # NO RECIBE LUZ → NO SE VUELVE GRIS
+	drop_mat.albedo_color = Color(0.2, 0.6, 1.0, 0.90)              # Azul fuerte, visible SIEMPRE
+	drop_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	drop_mat.alpha_scissor_threshold = 0.01
+
+	p.material_override = drop_mat
+
+	# ----------------------------------------------------
+	#  MESH DE LA GOTA (CILINDRITO)
+	# ----------------------------------------------------
 	var mesh := CylinderMesh.new()
 	mesh.top_radius = 0.07
 	mesh.bottom_radius = 0.07
 	mesh.height = 0.14
 	p.draw_pass_1 = mesh
 
-	# === AABB ===
+	# Volumen de visibilidad enorme (sino desaparece)
 	p.visibility_aabb = AABB(Vector3(-10, -10, -10), Vector3(20, 20, 20))
 
-	# === ADD ===
+	# ----------------------------------------------------
+	#  AGREGAR AL TANQUE
+	# ----------------------------------------------------
 	tank.add_child(p)
 	p.top_level = true
 	p.global_position = exit.global_position
 
 	tank.set("valve_particles", p)
-	p.add_to_group("debug_particles")
-
 
 func _on_tank_valve_opening():
 	var stream := water_tank_valve.get_node("ValveWaterParticles")
