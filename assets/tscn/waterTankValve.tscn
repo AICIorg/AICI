@@ -176,8 +176,45 @@ libraries = {
 }
 
 [node name="ValveLabel3D" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4842465, 1.9863335, -3.4021006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
 billboard = 1
-outline_size = 8
+no_depth_test = true
+shaded = true
+double_sided = false
+alpha_cut = 0
+alpha_scissor_threshold = 0.5
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 2
+texture_filter = 1
+render_priority = 10
+outline_render_priority = 10
+text = "Presiona E"
+font_size = 48
+outline_size = 12
+outline_modulate = Color(0, 0, 0, 1)
+modulate = Color(1, 1, 1, 1)
+pixel_size = 0.01
+visible = true
+
+[node name="WaterLevelLabel3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+no_depth_test = true
+shaded = true
+double_sided = false
+alpha_cut = 0
+alpha_scissor_threshold = 0.5
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 2
+texture_filter = 1
+render_priority = 10
+outline_render_priority = 10
+text = "Nivel: 0%"
+font_size = 42
+outline_size = 10
+outline_modulate = Color(0, 0, 0, 1)
+modulate = Color(0.3, 0.8, 1, 1)
+pixel_size = 0.01
+visible = true
 
 [node name="ValveExit" type="Marker3D" parent="."]

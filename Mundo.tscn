@@ -75,7 +75,7 @@ script = ExtResource("5_5yunf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.281, -2.312, -0.542)
 shape = SubResource("BoxShape3D_5yunf")
 
-[node name="Player" type="CharacterBody3D" parent="."]
+[node name="Player" type="CharacterBody3D" parent="." groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9974694, -0.22430319, 2.8193502)
 script = ExtResource("5_drrim")
 
@@ -92,3 +92,7 @@ target_position = Vector3(0, 0, -3)
 
 [node name="waterTankValve" parent="." instance=ExtResource("6_drrim")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 11.7588005, -1.9954114, 2.2158968)
+open_animation = null
+close_animation = null
+allow_interrupt = null
+interaction_distance = null

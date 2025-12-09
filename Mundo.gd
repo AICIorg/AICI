@@ -583,6 +583,10 @@ func add_water_to_tank(tank: Node3D):
 	var shader_mat = ShaderMaterial.new()
 	shader_mat.shader = load("res://assets/shaders/water.gdshader")
 	water.material_override = shader_mat
+	
+	# Comenzar invisible - será controlado por el script de la válvula
+	water.visible = false
+	water.scale = Vector3(1, 0, 1)  # Sin altura inicial
 
 	tank.add_child(water)
 	
@@ -643,8 +647,11 @@ func add_valve_water_particles(tank: Node3D):
 
 func _on_tank_valve_opening():
 	var stream := water_tank_valve.get_node("ValveWaterParticles")
-	stream.emitting = true
-	print("DEBUG EMIT:", stream.emitting) 
+	if stream:
+		stream.emitting = true
+		print("DEBUG EMIT:", stream.emitting)
+	else:
+		push_error("❌ No se encontró ValveWaterParticles") 
 
 func fix_valve_exit_position(tank: Node3D):
 	var exit := tank.get_node("ValveExit")
@@ -658,7 +665,10 @@ func fix_valve_exit_position(tank: Node3D):
 	
 func _on_tank_valve_closing():
 	var stream := water_tank_valve.get_node("ValveWaterParticles")
-	stream.emitting = false
+	if stream:
+		stream.emitting = false
+	else:
+		push_error("❌ No se encontró ValveWaterParticles")
 		
 # --- NUEVO: insertar asset en el mundo ---
 func insertAsset(name: String):
