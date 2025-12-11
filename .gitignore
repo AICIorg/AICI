@@ -6,3 +6,4 @@
 .env
 *.key
 secrets.json
+/addons/godot-git-plugin/win64/*.dll
