@@ -620,8 +620,8 @@ func add_valve_water_particles(tank: Node3D):
 	#  🔥 ESTO ES LO QUE EVITA EL GRIS DE MIERDA
 	# ----------------------------------------------------
 	var drop_mat := StandardMaterial3D.new()
-	drop_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED   # NO RECIBE LUZ → NO SE VUELVE GRIS
-	drop_mat.albedo_color = Color(0.2, 0.6, 1.0, 0.90)              # Azul fuerte, visible SIEMPRE
+	drop_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED 
+	drop_mat.albedo_color = Color(0.2, 0.6, 1.0, 0.90)              
 	drop_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	drop_mat.alpha_scissor_threshold = 0.01
 
@@ -672,56 +672,47 @@ func insertAsset(name: String):
 	print("insertAsset")
 	var asset_key = name.to_lower()
 	
-	# 🚰 CASO ESPECIAL: Tanque de agua (ya existe en la escena, solo hacerlo visible)
+	# 🚰 CASO ESPECIAL: Tanque de agua
 	if asset_key == "tanque de agua":
 		if water_tank_valve == null:
-			rich_text_label.text += "\n[color=red]Error:[/color] No se encontró el nodo waterTankValve en la escena."
-			print("❌ water_tank_valve es null.  Verifica que el nodo exista y la ruta sea correcta.")
+			rich_text_label. text += "\n[color=red]Error:[/color] No se encontró el nodo waterTankValve."
 			return
 		
 		if water_tank_valve.visible:
-			rich_text_label.text += "\n[color=yellow]Sistema:[/color] El tanque de agua ya está activado."
-			print("⚠️ Tanque de agua ya activado")
+			rich_text_label.text += "\n[color=yellow]Sistema:[/color] El tanque ya está activado."
 			return
 		
 		# Hacer visible el tanque
 		water_tank_valve.visible = true
-		rich_text_label.text += "\n[color=green]Sistema:[/color] Se activó el tanque de agua."
+		rich_text_label.text += "\n[color=green]Sistema:[/color] 💧 Tanque de agua activado (100. 0 L / 100%)."
 		print("✅ Tanque de agua activado")
+		
+		# Añadir agua con shader
 		add_water_to_tank(water_tank_valve)
 		
-		#fix_valve_exit_position(water_tank_valve)
-		add_valve_water_particles(water_tank_valve)
-
-		# conectar señales del tanque al Mundo
-		water_tank_valve.valve_opening.connect(_on_tank_valve_opening)
-		water_tank_valve.valve_closing.connect(_on_tank_valve_closing)
-		
-		var mesh_node = find_mesh(water_tank_valve)
-		if mesh_node:
-			print("Mesh found: ", mesh_node.name)
-			print("Mesh AABB: ", mesh_node.mesh.get_aabb())
-		else:
-			print("❌ No mesh inside tank")
-		
+		# Crear ValveExit y partículas
 		var valve_exit = Marker3D.new()
 		valve_exit.name = "ValveExit"
-
-		# posición aproximada basada en tu tanque real
-		# (ya lo vimos en runtime)
-		valve_exit.position = Vector3(3.5, -0.8, 0.0)
-		
-
+		valve_exit.position = Vector3(3.5, -0.8, 0.0)  # Ajustar según tu modelo
 		water_tank_valve.add_child(valve_exit)
-		water_tank_valve.global_position.y += 0.0
-		print("HIJOS DEL TANQUE:", water_tank_valve.get_children())
-	
+		
+		add_valve_water_particles(water_tank_valve)
+		
+		# ✅ Conectar señales para feedback en el chat
+		if not water_tank_valve.is_connected("valve_opening", Callable(self, "_on_tank_valve_opening")):
+			water_tank_valve.valve_opening.connect(_on_tank_valve_opening)
+		if not water_tank_valve.is_connected("valve_closing", Callable(self, "_on_tank_valve_closing")):
+			water_tank_valve.valve_closing.connect(_on_tank_valve_closing)
+		if not water_tank_valve.is_connected("water_level_changed", Callable(self, "_on_water_level_changed")):
+			water_tank_valve.water_level_changed.connect(_on_water_level_changed)
+				
 		# Incrementar contador
-		if asset_spawn_count.has(asset_key):
+		if asset_spawn_count. has(asset_key):
 			asset_spawn_count[asset_key] += 1
-		else:
+		else: 
 			asset_spawn_count[asset_key] = 1
-		return  # ← Salir, no instanciar nada
+			
+		return
 
 	#  VERIFICAR SI EL ASSET TIENE LÍMITE DE SPAWNEO
 	if asset_spawn_limits.has(asset_key):
@@ -797,6 +788,13 @@ func insertAsset(name: String):
 		asset_spawn_count[asset_key] += 1
 	else:
 		asset_spawn_count[asset_key] = 1
+		
+# Callbacks para feedback en el chat
+func _on_water_level_changed(liters:  float, percentage: float):
+	if percentage <= 0: 
+		rich_text_label. text += "\n[color=red]⚠️ TANQUE VACÍO (0 L)[/color]"
+	elif percentage <= 10 and int(percentage) % 5 == 0:
+		rich_text_label.text += "\n[color=yellow]⚠️ Nivel crítico:  %.1f L (%.0f%%)[/color]" % [liters, percentage]
 
 # --- para animacion de los elementos ---
 func findAnimationPlayerInNode(node: Node) -> AnimationPlayer:

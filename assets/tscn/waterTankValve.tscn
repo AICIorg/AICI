@@ -181,3 +181,10 @@ billboard = 1
 outline_size = 8
 
 [node name="ValveExit" type="Marker3D" parent="."]
+
+[node name="WaterLevelLabel3D" type="Label3D" parent="."]
+transform = Transform3D(-1, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -1, -0.56999004, 3.349108, -3.160742)
+billboard = 1
+no_depth_test = true
+modulate = Color(0, 1, 0, 1)
+text = "💧 100.0 L (100%)"
