@@ -119,6 +119,7 @@ La IA siempre ve tu pantalla.
 - Chiller
 - Llave
 - Panel de control
+- Tanque de agua (con válvula para vaciarlo)
 
 (Se esperan más activos en futuras versiones.)
 
@@ -321,7 +322,8 @@ branches:
 - Simulaciones de procesos industriales
 - Mejorar posicionamiento de assets con un algoritmo que los ubique en la mejor posición posible evitando colisiones entre sí
 - Integrar API de Speech-to-Text (hablarle al asistente)
-- Integrar API de Text-to-Speech (que el asistente responda con voz) 
+- Integrar API de Text-to-Speech (que el asistente responda con voz)
+- Mejorar UX/UI del sistema
 - Modo quiz / evaluación
 
 ---
