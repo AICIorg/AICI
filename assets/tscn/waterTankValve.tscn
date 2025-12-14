@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=4 uid="uid://cochwkos51q5q"]
+[gd_scene load_steps=14 format=4 uid="uid://cochwkos51q5q"]
 
-[ext_resource type="Script" uid="uid://cwe844jf7evuk" path="res://assets/scripts/waterTankValve.gd" id="1_3ce73"]
+[ext_resource type="Script" path="res://assets/scripts/waterTankValve.gd" id="1_3ce73"]
+[ext_resource type="Material" uid="uid://vqoqmv3wndo3" path="res://assets/materials/tanktransp.tres" id="2_0033k"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_l7tee"]
 height = 0.874
@@ -158,6 +159,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3701725, 0)
 transform = Transform3D(-0.25881898, 0, 0.96592575, 0, 1, 0, -0.96592575, 0, -0.25881898, 2.2426813, -3, 2.3831367)
 mesh = SubResource("ArrayMesh_c5m7j")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_0033k")
 
 [node name="_(Loose Entity)_002" type="Node3D" parent="."]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -2.1303163, 1.1921076, -4.0483284)
